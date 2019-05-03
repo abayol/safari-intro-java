@@ -1,9 +1,23 @@
 package datestuff;
 
 public class Date {
-  int day;
-  int month;
-  int year;
+  private int day;
+  private int month;
+  private int year;
+
+  // "constructor" better called initializer :)
+  public  Date(int day, int m, int y) {
+    if (day < 1 || day > daysInMonth(m, y)
+        || m < 1 || m > 12) {
+      // BAD DATE
+      throw new IllegalArgumentException("Bad date: day=" + day
+          + " month=" + m);
+    }
+    this.day = day;
+    this.month = m;
+    this.year = y;
+//    day = d; // implicitly this.day
+  }
 
   public static boolean isLeapYear(int year) {
     return (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);
@@ -36,6 +50,50 @@ public class Date {
     }
     return (day + (13 * (month + 1) / 5) + year + (year / 4)
         - (year / 100) + (year / 400)) % 7;
+  }
+
+  public static int dayOfWeek(Date d) {
+    return dayOfWeek(d.day, d.month, d.year);
+  }
+
+  public int dayOfWeek() {
+    return dayOfWeek(this.day, this.month, this.year);
+  }
+
+  public static Date tomorrow(Date d) {
+    // WRONG!!! Should wrap end of month/ end of year!!!
+    Date tomorrow = new Date(d.day + 1,d.month,d.year);
+//    tomorrow.day = d.day + 1;
+//    tomorrow.month = d.month;
+//    tomorrow.year = d.year;
+    return tomorrow;
+  }
+
+  public Date tomorrow() {
+    // Take INTERNAL Responsibility for correctness (do this kind of
+    // care in every method in this class)
+    int tomorrowsTentativeDay = this.day + 1;
+    int tomorrowsTentativeMonth = this.month;
+    int tomorrowsTentativeYear = this.year;
+    if (tomorrowsTentativeDay > daysInMonth(this.month, this.year)) {
+      tomorrowsTentativeDay = 1;
+      tomorrowsTentativeMonth++;
+      if (tomorrowsTentativeMonth > 12) {
+        tomorrowsTentativeMonth = 1;
+        tomorrowsTentativeYear++;
+      }
+    }
+    return new Date(
+        tomorrowsTentativeDay,
+        tomorrowsTentativeMonth,
+        tomorrowsTentativeYear);
+  }
+
+  @Override
+  public String toString() {
+    return "Date: day=" + this.day
+        + " month=" + this.month
+        + " year=" + this.year;
   }
   // Write a method to turn 0 -> 6 into text Saturday -> Friday
 
